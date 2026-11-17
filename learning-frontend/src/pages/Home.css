@@ -1,0 +1,356 @@
+
+/* =========================
+   HOME HERO
+========================= */
+
+.home {
+  min-height: 620px;
+  padding: 80px 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  background:
+    linear-gradient(
+      135deg,
+      #eff6ff 0%,
+      #ffffff 50%,
+      #eef2ff 100%
+    );
+}
+
+.home-content {
+  width: 100%;
+  max-width: 900px;
+}
+
+.home-label {
+  margin-bottom: 14px;
+
+  color: #2563eb;
+
+  font-size: 13px;
+  font-weight: 800;
+
+  letter-spacing: 2px;
+}
+
+.home h1 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 64px;
+  line-height: 1.1;
+  font-weight: 800;
+}
+
+.home h1 span {
+  color: #2563eb;
+}
+
+.home-description {
+  max-width: 700px;
+
+  margin: 25px auto 35px;
+
+  color: #667085;
+
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+.explore-btn {
+  padding: 15px 30px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #2563eb;
+  color: white;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.25s ease;
+}
+
+.explore-btn:hover {
+  background: #1d4ed8;
+  transform: translateY(-3px);
+}
+
+
+/* =========================
+   LEARN FEATURES
+========================= */
+
+.features-section {
+  padding: 100px 30px;
+
+  background: #ffffff;
+}
+
+.features-header {
+  max-width: 800px;
+
+  margin: 0 auto 55px;
+
+  text-align: center;
+}
+
+.features-header h2 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 44px;
+  font-weight: 800;
+}
+
+.features-header p:last-child {
+  margin-top: 14px;
+
+  color: #667085;
+
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+
+/* =========================
+   FEATURE CARDS
+========================= */
+
+.features-grid {
+  width: 100%;
+  max-width: 1150px;
+
+  margin: 0 auto;
+
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 28px;
+}
+
+.feature-card {
+  min-height: 280px;
+
+  padding: 35px;
+
+  background: #ffffff;
+
+  border: 1px solid #e4e7ec;
+
+  border-radius: 20px;
+
+  text-align: center;
+
+  box-shadow:
+    0 8px 25px rgba(16, 24, 40, 0.06);
+
+  transition: 0.25s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-8px);
+
+  border-color: #bfdbfe;
+
+  box-shadow:
+    0 18px 40px rgba(16, 24, 40, 0.10);
+}
+
+
+/* Feature Icon */
+
+.feature-icon {
+  width: 75px;
+  height: 75px;
+
+  margin: 0 auto 25px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #eef2ff;
+
+  border-radius: 18px;
+
+  font-size: 34px;
+}
+
+
+/* Feature Title */
+
+.feature-card h3 {
+  margin: 0 0 14px;
+
+  color: #172033;
+
+  font-size: 23px;
+  font-weight: 750;
+}
+
+
+/* Feature Description */
+
+.feature-card p {
+  margin: 0;
+
+  color: #667085;
+
+  font-size: 15px;
+
+  line-height: 1.8;
+}
+
+
+/* =========================
+   CTA
+========================= */
+
+.home-cta {
+  width: calc(100% - 60px);
+  max-width: 1150px;
+
+  margin: 80px auto;
+
+  padding: 55px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 30px;
+
+  background: #172033;
+
+  border-radius: 22px;
+
+  color: white;
+}
+
+.home-cta h2 {
+  margin: 0 0 12px;
+
+  font-size: 34px;
+}
+
+.home-cta p {
+  margin: 0;
+
+  color: #cbd5e1;
+
+  font-size: 16px;
+
+  line-height: 1.7;
+}
+
+.cta-btn {
+  flex-shrink: 0;
+
+  padding: 15px 28px;
+
+  border: none;
+  border-radius: 9px;
+
+  background: #2563eb;
+  color: white;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.25s ease;
+}
+
+.cta-btn:hover {
+  background: #1d4ed8;
+
+  transform: translateY(-3px);
+}
+
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 900px) {
+
+  .home h1 {
+    font-size: 52px;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+  .home {
+    min-height: 520px;
+
+    padding: 60px 20px;
+  }
+
+  .home h1 {
+    font-size: 40px;
+  }
+
+  .home-description {
+    font-size: 16px;
+  }
+
+  .features-section {
+    padding: 65px 20px;
+  }
+
+  .features-header h2 {
+    font-size: 32px;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .feature-card {
+    min-height: auto;
+
+    padding: 30px 25px;
+  }
+
+  .home-cta {
+    width: auto;
+
+    margin: 45px 20px;
+
+    padding: 35px 25px;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+  .cta-btn {
+    width: 100%;
+  }
+
+}
+
