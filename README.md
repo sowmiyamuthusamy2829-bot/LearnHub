@@ -152,6 +152,16 @@ This allows one CloudFront distribution to handle frontend content and backend A
 - Receives notifications from CloudWatch alarms.
 - Sends email alerts when configured alarms change state.
 
+**AWS CloudTrail**
+
+AWS CloudTrail is used to review AWS Event History.
+For this project, CloudTrail was mainly used to check AWS activities such as:
+EC2 instance creation
+EC2 instance termination
+Resource-related actions
+AWS API activity
+CloudTrail Event History provides visibility into actions performed within the AWS account.
+
 ## 12. Security Architecture
 
 The infrastructure follows a layered security approach:
