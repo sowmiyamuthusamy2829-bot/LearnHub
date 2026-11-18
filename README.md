@@ -8,211 +8,397 @@ The application uses a React.js frontend, Node.js backend, and MySQL database. A
 
 ## 2. Problem Statement
 
-Online learning applications may experience varying levels of user traffic. Hosting the entire application on a single server can lead to:
+Traditional online learning applications hosted on a single server may face several infrastructure challenges as the number of users increases.
 
-- Performance issues during high traffic.
-- Limited application scalability.
-- Single points of failure.
-- Difficulty managing application resources.
-- Challenges in monitoring infrastructure health.
-
-The project focuses on addressing these infrastructure requirements through AWS cloud services.
+The major challenges include:
+**Performance Issues:** A single server may struggle to handle multiple simultaneous user requests.
+**Limited Scalability:** Increasing application resources manually becomes difficult when user traffic grows.
+**Single Point of Failure:** Server failures can make the entire application unavailable.
+**Database Security:** Exposing database resources to the public internet creates security risks.
+**Traffic Management:** Handling incoming requests efficiently becomes challenging during high traffic.
+**Infrastructure Monitoring:** Identifying server failures and resource utilization issues requires continuous monitoring.
 
 ## 3. Proposed System
 
-LearnHub uses a three-tier cloud architecture to separate the frontend, backend, and database layers.
+LearnHub addresses these challenges using AWS cloud infrastructure, including load balancing, Auto Scaling, private networking, managed database services, content delivery, and infrastructure monitoring.
 
-- **Frontend:** React application and static files are hosted in Amazon S3 and delivered through Amazon CloudFront.
-- **Backend:** Node.js application runs on EC2 instances in private subnets.
-- **Traffic Distribution:** Application Load Balancer distributes incoming API requests to healthy backend instances.
-- **Database:** Amazon RDS MySQL stores application data.
-- **Monitoring:** Amazon CloudWatch monitors infrastructure metrics, while Amazon SNS sends email notifications for configured alarms.
-
-## 4. Project Objectives
-
-- Develop a cloud-based online learning platform.
-- Deploy frontend and backend application components.
-- Configure public and private subnets within an AWS VPC.
-- Distribute backend traffic using an Application Load Balancer.
-- Manage EC2 instances using an Auto Scaling Group.
-- Store application data using Amazon RDS MySQL.
-- Deliver frontend content through Amazon CloudFront.
-- Monitor infrastructure using Amazon CloudWatch.
-- Configure email notifications using Amazon SNS.
-
-## 5. Technologies Used
-
- Amazon RDS                
-| Component      | Technology                      |
-| -------------- | ------------------------------- |
-| Frontend       | React.js, HTML, CSS, JavaScript |
-| Backend        | Node.js, Express.js             |
-| Database       | MySQL                           |
-| Cloud Platform | Amazon Web Services (AWS)       |
-
-## 6. AWS Services Used             
- Amazon EC2                                  
- Amazon S3                     
-Amazon CloudFront                                 
- Application Load Balancer
- Target Group              
-Auto Scaling Group                
-Amazon VPC                
- Internet Gateway                
- NAT Gateway               
- Amazon CloudWatch        
- Amazon SNS                
-
-## 7. Project Features
-
-- User Registration and Login
-- Course Browsing
-- Course Details
-- Learning Materials
-- User Dashboard
-- Online Quizzes
-- Cloud-based application deployment
-- Load balancing and automatic scaling
-- Infrastructure monitoring and email alerts
-
-## 8. AWS Architecture
+## 4. Architecture Diagram
 
 LearnHub follows a three-tier AWS architecture consisting of the presentation, application, and database tiers.
 <img width="1536" height="1024" alt="aws-architecture" src="https://github.com/user-attachments/assets/a02b291c-c999-450a-8b7f-26dd7996fc4c" />
 
+##  Tier 1 — Presentation Layer
 
-### Architecture Diagram Explanation
+Infrastructure components responsible for frontend content delivery.
+Amazon S3: Object storage for static frontend files.
+Amazon CloudFront: Content delivery network for distributing frontend content.
+CloudFront Origins: S3 for frontend content and ALB for API traffic.
+Origin Access Control: Secures CloudFront access to the private S3 origin.
 
-**Presentation Tier**
+## Tier 2 — Application Layer
+Infrastructure components responsible for application hosting and traffic management.
+Amazon VPC: Isolated networking environment.
+Public Subnets: Host internet-facing Application Load Balancer and NAT Gateway.
+Private Application Subnets: Host backend EC2 instances.
+Internet Gateway: Provides internet connectivity to public subnet resources.
+NAT Gateway: Provides outbound internet connectivity to private instances.
+Application Load Balancer: Distributes incoming requests.
+Target Group: Registers EC2 instances and performs health checks.
+Auto Scaling Group: Automatically manages EC2 instance capacity.
+Jump Host: Provides administrative access to private EC2 instances, if configured.
 
-- React frontend hosted on Amazon S3.
-- Amazon CloudFront delivers frontend and static content.
-- CloudFront uses separate origins for Amazon S3 and the Application Load Balancer.
+## Tier 3 — Database Layer
+Infrastructure components responsible for database hosting and network security.
+Amazon RDS MySQL: Managed relational database hosting.
+Private Database Subnets: Isolate database resources.
+DB Subnet Group: Defines the subnets used by RDS.
+Security Groups: Restrict database access to authorized application resources.
+Multi-AZ: Can provide database standby availability if configured.
 
-**Application Tier**
+## AWS Services Used
 
-- Node.js backend runs on Amazon EC2 instances.
-- Backend instances are deployed in private application subnets.
-- Application Load Balancer distributes incoming API requests.
-- Auto Scaling Group manages EC2 instance capacity.
-- Target Group health checks identify healthy backend instances.
+AWS Service	           Purpose
+Amazon EC2	Hosts the Node.js backend application
+Amazon S3	Stores React frontend static files
+Amazon CloudFront	Delivers frontend content and routes API requests
+Application Load Balancer	Distributes API requests across healthy EC2 instances
+Auto Scaling Group	Manages backend EC2 instance capacity
+Amazon RDS MySQL	Stores application data
+Amazon VPC	Provides an isolated network environment
+Internet Gateway	Enables internet connectivity for public subnet resources
+NAT Gateway	Enables outbound internet connectivity from private subnets
+Amazon CloudWatch	Monitors infrastructure metrics and configured alarms
+Amazon SNS	Sends email notifications
+AWS CloudTrail	Records AWS account API activity
 
-**Database Tier**
+## Major Problems Faced During Implementation
 
-- Amazon RDS MySQL stores application data.
-- RDS is deployed in private database subnets.
-- Backend EC2 instances communicate with the database.
+1. Accessing Private EC2 Instances Using a Jump Host
 
-## 9. VPC and Network Architecture
+Problem
 
-A custom Amazon VPC provides an isolated network environment.
+The backend application instances were deployed inside private subnets and did not have direct public access. Therefore, direct SSH access from the local machine was not available.
 
-The network architecture includes:
+Troubleshooting and Resolution
 
-- Public subnets
-- Private application subnets
-- Private database subnets
-- Internet Gateway
-- NAT Gateway
-- Application Load Balancer
-- Jump Host
+A public EC2 instance was configured as a Jump Host (Bastion Host) to provide controlled administrative access to private EC2 instances.
 
-**Public Layer:** Contains internet-facing infrastructure components such as the Application Load Balancer, NAT Gateway, and Jump Host.
+Access Flow:
 
-**Private Application Layer:** Hosts backend EC2 instances. Application traffic reaches these instances through the Application Load Balancer.
+Local Machine
+      |
+      v
+Public EC2 Instance
+   (Jump Host)
+      |
+      v
+Private EC2 Instance
 
-**Private Database Layer:** Hosts the Amazon RDS MySQL database, which is accessed by the backend application.
+The private EC2 instance was accessed through the Jump Host using its private IP address.
 
-## 10. Application Request Flow
+This approach allowed administrative access without exposing the backend instances directly to the internet.
 
-**Frontend Request**
+Key Finding
 
-User → CloudFront → Amazon S3 → React Frontend
+A Jump Host provides a controlled access point for managing resources deployed inside private subnets.
 
-**Backend API Request**
+2. Application Load Balancer Target Health Check Failure
 
-User → CloudFront → /api/\* → Application Load Balancer → Target Group → EC2 Backend → Amazon RDS MySQL
+Problem
 
-CloudFront is configured with:
+The EC2 instances launched through Auto Scaling were successfully registered with the Application Load Balancer Target Group. However, the targets were initially marked as:
 
-- Default Behavior → Amazon S3
-- /api/\* → Application Load Balancer
+Unhealthy
+Health check failed
 
-This allows one CloudFront distribution to handle frontend content and backend API requests.
+Troubleshooting
 
-## 11. Monitoring and Notifications
+The following configurations were reviewed:
 
-**Amazon CloudWatch**
+Target Group health check configuration
 
-- Monitors EC2 CPU utilization and infrastructure metrics.
-- Uses configured alarms to detect specified conditions.
+Health check path
 
-**Amazon SNS**
+Application listening port
 
-- Receives notifications from CloudWatch alarms.
-- Sends email alerts when configured alarms change state.
+Backend application availability
 
-**AWS CloudTrail**
+Security Group communication between the ALB and EC2 instances
 
-AWS CloudTrail is used to review AWS Event History.
-For this project, CloudTrail was mainly used to check AWS activities such as:
-EC2 instance creation
-EC2 instance termination
-Resource-related actions
-AWS API activity
-CloudTrail Event History provides visibility into actions performed within the AWS account.
+Resolution
 
-## 12. Security Architecture
+The health check and application connectivity configurations were reviewed and corrected until the targets became healthy.
 
-The infrastructure follows a layered security approach:
+Key Finding
 
-- Backend EC2 instances are deployed in private subnets.
-- RDS is deployed in private database subnets.
-- Security Groups control communication between infrastructure components.
-- Backend traffic is received through the Application Load Balancer.
-- NAT Gateway provides outbound connectivity for private instances when required.
-- Administrative access to private EC2 instances is provided through a Jump Host.
+An EC2 instance being in the Running state does not guarantee that it is healthy from the Application Load Balancer perspective.
 
-## 13. High Availability and Scalability
+The application must respond successfully to the configured health check.
 
-The architecture uses the following AWS components to support availability and scalability:
+3. RDS Instance Capacity Issue
 
-- Multiple EC2 backend instances.
-- Application Load Balancer.
-- Target Group health checks.
-- Auto Scaling Group.
-- Multiple Availability Zones.
+Problem
 
-The Load Balancer distributes requests across healthy instances, while Auto Scaling manages backend application capacity.
+The Amazon RDS database instance remained in the Starting state and did not become available.
 
-## 14. Project Structure
+The following error was identified:
 
-```text
-LearnHub/
-├── learning-frontend/
-└── learning-backend/
-```
+Insufficient instance capacity for instance type db.t4g.micro
 
-## 15. Project Outcome
+Troubleshooting
 
-The project demonstrates the integration of AWS services to deploy and manage a cloud-based online learning application.
+The RDS instance status and event history were reviewed through the AWS Management Console.
 
-Key implementation areas include frontend hosting, backend application deployment, traffic distribution, database management, VPC networking, infrastructure monitoring, and email notifications.
+The issue was identified as insufficient capacity for the selected DB instance type in the selected Availability Zone.
 
-## 16. Future Improvements
+Resolution
 
-- HTTPS configuration with a custom domain.
-- AWS WAF integration.
-- CI/CD pipeline implementation.
-- Infrastructure automation using Terraform or AWS CloudFormation.
-- Enhanced application monitoring.
-- Database backup and disaster recovery improvements.
-- Container-based deployment using Amazon ECS.
+The RDS capacity issue was investigated by reviewing the instance status and AWS events.
 
-## 17. Author
+Key Finding
 
-**Sowmiya Muthusamy**
+Availability of an RDS instance type can vary depending on temporary capacity availability within a specific Availability Zone.
 
-BE – Electronics and Communication Engineering
+4. Backend Database Connection Failures
 
-GitHub: [Sowmiya Muthusamy](https://github.com/sowmiyamuthusamy2829-bot)
+Problem
+
+The backend application encountered database connection failures, which affected API functionality.
+
+The application logs contained errors such as:
+
+Access denied
+ECONNREFUSED
+ETIMEDOUT
+PROTOCOL_CONNECTION_LOST
+
+Troubleshooting
+
+The following components were verified:
+
+RDS instance status
+
+Database connectivity from EC2
+
+RDS endpoint configuration
+
+Backend database configuration
+
+Application logs
+
+The database connection was also tested directly from the EC2 instance to verify network connectivity and database authentication.
+
+Resolution
+
+After verifying database availability and backend connectivity, the application was able to establish a successful connection to Amazon RDS.
+
+Key Finding
+
+Database connectivity depends on multiple configurations, including database availability, endpoint configuration, network access, Security Groups, and authentication credentials.
+
+5. Inconsistent API Responses Across Multiple EC2 Instances
+
+Problem
+
+Multiple EC2 instances were registered with the Application Load Balancer Target Group and showed healthy status.
+
+However, the backend API response was inconsistent between instances.
+
+One instance returned the expected response, while another instance returned an application error.
+
+Troubleshooting
+
+The affected API was tested individually on each EC2 instance:
+
+curl http://localhost:5000/api/progress/3
+
+Backend application logs and database connectivity were also checked on each instance.
+
+Key Finding
+
+A healthy Target Group status confirms that the load balancer can successfully reach the target for its configured health check.
+
+However, it does not guarantee that every backend API endpoint or database operation is functioning correctly.
+
+Resolution
+
+The backend application logs and database connectivity were investigated to identify inconsistencies between the EC2 instances.
+
+** CloudFront Backend API Routing Issue
+
+Problem
+
+CloudFront was initially configured with Amazon S3 as the only origin.
+
+The frontend application loaded successfully, but backend API requests could not reach the backend application.
+
+Cause
+
+The frontend was hosted in Amazon S3, while the backend application was running on EC2 instances behind an Application Load Balancer.
+
+Separate origins and routing behaviors were required for frontend and API requests.
+
+Resolution
+
+A second CloudFront origin was configured for the Application Load Balancer.
+
+CloudFront Origin Configuration:
+
+Origin 1 → Amazon S3
+Origin 2 → Application Load Balancer
+
+A CloudFront cache behavior was configured to route API requests:
+
+/api/* → Application Load Balancer
+
+Final Request Flow:
+
+Frontend Request:
+
+User
+ |
+ v
+CloudFront
+ |
+ v
+Amazon S3
+ |
+ v
+Frontend Application
+
+API Request:
+
+User
+ |
+ v
+CloudFront
+ |
+ v
+Application Load Balancer
+ |
+ v
+EC2 Backend Instances
+ |
+ v
+Amazon RDS
+
+This configuration allowed CloudFront to distribute frontend content through S3 and forward backend API requests to the Application Load Balancer.
+
+Key Finding
+
+CloudFront supports multiple origins and cache behaviors, allowing frontend and backend requests to be routed to different AWS resources.
+
+7. CloudFront Cache Issue
+
+Problem
+
+After updating frontend files in the S3 bucket, the latest changes were not immediately visible through the CloudFront distribution.
+
+Cause
+
+CloudFront continued serving previously cached versions of the frontend files.
+
+Resolution
+
+A CloudFront invalidation was created using the following path:
+
+/*
+
+After the invalidation was completed, CloudFront fetched the updated content from the origin and delivered the latest frontend version.
+
+Key Finding
+
+CloudFront caching improves content delivery performance, but cached objects may need invalidation when updated content must become available immediately.
+
+8. CloudFront Custom Error Response Configuration
+
+Problem
+
+The frontend application used client-side routes such as:
+
+/courses
+/dashboard
+
+When these URLs were accessed directly or refreshed, Amazon S3 could not find corresponding physical files and returned an error.
+
+Cause
+
+React client-side routing handles application routes in the browser. However, direct requests to those routes may reach the S3 origin, which does not automatically serve the React entry point for every application route.
+
+Resolution
+
+CloudFront Custom Error Responses were configured to return the frontend entry point (/index.html) for the relevant error responses.
+
+403 Error Handling:
+
+403 Error
+    |
+    v
+/index.html
+    |
+    v
+React Application
+
+404 Error Handling:
+
+404 Error
+    |
+    v
+/index.html
+    |
+    v
+React Application
+
+The React application could then handle client-side routing.
+
+Key Finding
+
+CloudFront Custom Error Responses can help support client-side routing for single-page applications hosted on Amazon S3.
+
+9. CloudWatch Alarm and SNS Notification Issue
+
+Problem
+
+A CloudWatch alarm entered the ALARM state, but the expected email notification was not initially received.
+
+Troubleshooting
+
+The following configurations were verified:
+
+CloudWatch alarm configuration
+
+SNS Topic configuration
+
+SNS email subscription
+
+Email subscription confirmation status
+
+Resolution
+
+The SNS notification configuration and subscription status were reviewed to ensure that alarm notifications could be delivered successfully.
+
+Key Finding
+
+CloudWatch alarms can use Amazon SNS to send notifications when monitored metrics meet configured alarm conditions.
+
+An email subscription must be confirmed before SNS can deliver notifications to that email address.
+
+![Project Output 1](./images/image1.png)
+
+
+![Project Output 2](./images/image2.png)
+
+
+![Project Output 3](./images/image3.png)
+
+
+![Project Output 4](./images/image4.png)
+
+
+![Project Output 5](./images/image5.png)
+
+
+![Project Output 6](./images/image6.png)
+
+
+![Project Output 7](./images/image7.png)
