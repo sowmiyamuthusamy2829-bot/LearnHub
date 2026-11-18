@@ -11,12 +11,12 @@ The application uses a React.js frontend, Node.js backend, and MySQL database. A
 Traditional online learning applications hosted on a single server may face several infrastructure challenges as the number of users increases.
 
 The major challenges include:
-**Performance Issues:** A single server may struggle to handle multiple simultaneous user requests.
-**Limited Scalability:** Increasing application resources manually becomes difficult when user traffic grows.
-**Single Point of Failure:** Server failures can make the entire application unavailable.
-**Database Security:** Exposing database resources to the public internet creates security risks.
-**Traffic Management:** Handling incoming requests efficiently becomes challenging during high traffic.
-**Infrastructure Monitoring:** Identifying server failures and resource utilization issues requires continuous monitoring.
+- **Performance Issues:** A single server may struggle to handle multiple simultaneous user requests.
+- **Limited Scalability:** Increasing application resources manually becomes difficult when user traffic grows.
+- **Single Point of Failure:** Server failures can make the entire application unavailable.
+- **Database Security:** Exposing database resources to the public internet creates security risks.
+- **Traffic Management:** Handling incoming requests efficiently becomes challenging during high traffic.
+- **Infrastructure Monitoring:** Identifying server failures and resource utilization issues requires continuous monitoring.
 
 ## 3. Proposed System
 
@@ -41,19 +41,20 @@ The Database Layer is responsible for securely storing and managing application 
 
 ## AWS Services Used
 
-**AWS Service**	           **Purpose**
-Amazon EC2	                  Hosts the Node.js backend application
-Amazon S3	                  Stores React frontend static files
-Amazon CloudFront	            Delivers frontend content and routes API requests
-Application Load Balancer	Distributes API requests across healthy EC2 instances
-Auto Scaling Group	      Manages backend EC2 instance capacity
-Amazon RDS MySQL	            Stores application data
-Amazon VPC	                  Provides an isolated network environment
-Internet Gateway	            Enables internet connectivity for public subnet resources
-NAT Gateway	                  Enables outbound internet connectivity from private subnets
-Amazon CloudWatch       	Monitors infrastructure metrics and configured alarms
-Amazon SNS	                  Sends email notifications
-AWS CloudTrail	            Records AWS account API activity
+| AWS Service | Purpose |
+|---|---|
+| **Amazon EC2** | Hosts the Node.js backend application |
+| **Amazon S3** | Stores React frontend static files |
+| **Amazon CloudFront** | Delivers frontend content and routes API requests |
+| **Application Load Balancer (ALB)** | Distributes API requests across healthy EC2 instances |
+| **Auto Scaling Group (ASG)** | Manages backend EC2 instance capacity |
+| **Amazon RDS for MySQL** | Stores application data |
+| **Amazon VPC** | Provides an isolated network environment |
+| **Internet Gateway (IGW)** | Enables internet connectivity for public subnet resources |
+| **NAT Gateway** | Enables outbound internet connectivity from private subnets |
+| **Amazon CloudWatch** | Monitors infrastructure metrics and configured alarms |
+| **Amazon SNS** | Sends email notifications |
+| **AWS CloudTrail** | Records AWS account API activity |
 
 ## Major Problems Faced During Implementation
 
