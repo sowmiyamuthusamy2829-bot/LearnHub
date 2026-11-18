@@ -78,8 +78,8 @@ Amazon VPC
 ## 8. AWS Architecture
 
 LearnHub follows a three-tier AWS architecture consisting of the presentation, application, and database tiers.
+<img width="1536" height="1024" alt="aws-architecture" src="https://github.com/user-attachments/assets/a02b291c-c999-450a-8b7f-26dd7996fc4c" />
 
-![LearnHub AWS Architecture](./images/aws-architecture.png)
 
 ### Architecture Diagram Explanation
 
