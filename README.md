@@ -27,17 +27,86 @@ LearnHub addresses these challenges using AWS cloud infrastructure, including lo
 LearnHub follows a three-tier AWS architecture consisting of the presentation, application, and database tiers.
 <img width="1536" height="1024" alt="aws-architecture" src="https://github.com/user-attachments/assets/a02b291c-c999-450a-8b7f-26dd7996fc4c" />
 
-**Tier 1 — Presentation Layer**
+## 1. Presentation Layer – Frontend Delivery
 
-The Presentation Layer is responsible for hosting and delivering the frontend content to users. Amazon S3 is used to store the static frontend files, while Amazon CloudFront acts as a Content Delivery Network (CDN) to distribute the content with low latency. CloudFront is configured with two origins: Amazon S3 for frontend content and the Application Load Balancer (ALB) for API requests. Origin Access Control (OAC) is used to secure access to the private S3 bucket and ensure that frontend content is accessed through CloudFront.
+**User / Web Browser**
 
-**Tier 2 — Application Layer**
+Accesses the LearnHub application.
 
-The Application Layer handles application processing, backend hosting, and traffic management within an Amazon VPC. The VPC contains public and private subnets to separate internet-facing resources from backend infrastructure. Public subnets host the internet-facing Application Load Balancer, NAT Gateway, and Jump Host (if configured), while private application subnets host the backend EC2 instances. An Internet Gateway enables internet connectivity for public subnet resources, and the NAT Gateway allows private EC2 instances to access the internet for outbound communication. The Application Load Balancer distributes incoming application requests across registered EC2 instances through a Target Group, which performs health checks to monitor instance availability. An Auto Scaling Group automatically adjusts the number of EC2 instances based on application demand, helping maintain availability and performance.
+⬇️
 
-**Tier 3 — Database Layer**
+**Amazon CloudFront (CDN)**
 
-The Database Layer is responsible for securely storing and managing application data. Amazon RDS for MySQL is used as the managed relational database service for storing user information, course details, and other application data. The database is deployed in private database subnets to prevent direct public internet access. An RDS DB Subnet Group defines the subnets available for database deployment, while Security Groups restrict database access to authorized application resources, such as the backend EC2 instances. Multi-AZ deployment, when enabled, provides a standby database instance in another Availability Zone to support high availability and automatic failover.
+Receives user requests and routes them to the appropriate origin.
+
+⬇️
+
+**S3 Origin**
+
+- Stores static frontend files.
+- Origin Access Control (OAC) enabled to secure the private S3 bucket.
+
+**ALB Origin**
+
+- Forwards API requests to the Application Load Balancer.
+
+---
+
+## 2. Application Layer – Backend Processing
+
+**Amazon VPC**
+
+- Contains public and private subnets across multiple Availability Zones.
+
+⬇️
+
+**Internet-facing Application Load Balancer (ALB)**
+
+- Receives API traffic.
+- Distributes incoming requests to registered backend EC2 instances.
+
+⬇️
+
+**Target Group**
+
+- Performs health checks.
+- Identifies healthy EC2 instances.
+
+⬇️
+
+**Backend EC2 Instances**
+
+- Run the LearnHub backend application.
+- Deployed in private application subnets.
+
+⬇️
+
+**Auto Scaling Group**
+
+- Automatically adjusts EC2 capacity based on application demand.
+- Helps maintain application availability and performance.
+
+---
+
+## 3. Database Layer – Data Storage
+
+**Amazon RDS for MySQL**
+
+- Stores user details, course information, and application data.
+- Deployed in private database subnets.
+
+⬇️
+
+**RDS DB Subnet Group**
+
+- Defines the subnets available for database deployment across Availability Zones.
+
+⬇️
+
+**Multi-AZ Standby (if enabled)**
+
+- Maintains a standby database instance in another Availability Zone.
+- Supports high availability and automatic failover.
 
 ## AWS Services Used
 
@@ -387,3 +456,29 @@ An email subscription must be confirmed before SNS can deliver notifications to 
 
 
 ![Project Output 7](./images/image7.png)
+
+ ## Future Improvements
+
+**1. CI/CD Pipeline Automation**
+
+- Implement Jenkins to automate application build, testing, and deployment.
+
+- Integrate GitHub with Jenkins for continuous integration and continuous delivery.
+
+**2. Docker Containerization**
+
+- Containerize the LearnHub frontend and backend applications using Docker.
+
+- Use Docker Compose for managing multiple application containers.
+
+**3. Infrastructure as Code (IaC)**
+
+- Implement Terraform or AWS CloudFormation to automate AWS infrastructure provisioning and management.
+
+**Security Enhancements**
+
+- Use AWS Secrets Manager to securely manage database credentials.
+
+- Implement AWS WAF with CloudFront to protect against common web attacks.
+
+  
